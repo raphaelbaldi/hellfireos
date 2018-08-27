@@ -2,3 +2,4 @@ gcc-4.6.1/
 usr/sim/hf_risc_sim/hf_risk_sim
 *.o
 platform/single_core/image*
+platform/single_core/log.txt
