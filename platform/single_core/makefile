@@ -1,4 +1,4 @@
-APP = app/sched_test2
+APP = app/pidgeon
 ARCH = mips/hf-risc
 
 SERIAL_BAUD=57600
