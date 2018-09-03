@@ -1,4 +1,4 @@
-APP = app/pidgeon
+APP = app/aula_10
 ARCH = mips/hf-risc
 
 SERIAL_BAUD=57600
