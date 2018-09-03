@@ -12,7 +12,7 @@ tar -zxvf gcc-4.6.1.tar.gz
 rm gcc-4.6.1.tar.gz
 
 # Setup PATH to include the newly downloaded cross compiler
-export PATH=$PATH:./gcc-4.6.1/bin
+export PATH=$PATH:$PWD/gcc-4.6.1/bin
 
 # Check that mips compiler is accessible
 mips-elf-gcc -v
