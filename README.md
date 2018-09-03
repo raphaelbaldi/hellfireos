@@ -13,8 +13,13 @@
 - sys/ - kernel core
 - usr/ - simulators and documentation
 
-### How to initialize the system
-Run
+### How to initialize the environment
 ```
-source init_environment.sh
+$ source init_environment.sh
+```
+
+### Running the simulator
+After initializing the environment and compiling your image, run:
+```
+$ usr/sim/hf_risc_sim/hf_risk_sim path/to/your/image.bin
 ```
