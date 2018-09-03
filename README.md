@@ -12,3 +12,9 @@
 - platform/ - image building scripts for different platforms (application, kernel, architecture)
 - sys/ - kernel core
 - usr/ - simulators and documentation
+
+### How to initialize the system
+Run
+```
+source init_environment.sh
+```
