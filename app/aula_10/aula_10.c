@@ -13,7 +13,7 @@ void task(void) {
 void app_main(void) {
     int32_t group = 1;
     
-    // Group 1
+    // Group 1 - Escalonavel. CPU livre: 18%
     // T1: {p = 5, c = 2}
     // T2: {p = 7, c = 3}
     if (group == 1) {
@@ -21,7 +21,7 @@ void app_main(void) {
         hf_spawn(task, 7, 3, 7, "T2", 2048);
     }
     
-    // Group 2
+    // Group 2 - Escalonavel. CPU livre: 29%
     // T1: {p =  6, c = 1}
     // T2: {p = 10, c = 3}
     // T3: {p = 16, c = 4}
@@ -31,7 +31,7 @@ void app_main(void) {
         hf_spawn(task, 16, 4, 16, "T3", 2048);
     }
     
-    // Group 3
+    // Group 3 - Escalonavel. CPU livre: 19%
     // T1: {p =  5, c = 2}
     // T2: {p =  8, c = 2}
     // T3: {p = 12, c = 2}
@@ -41,17 +41,17 @@ void app_main(void) {
         hf_spawn(task, 12, 2, 12, "T3", 2048);
     }
     
-    // Group 4
+    // Group 4 - Nao escalonavel. CPU livre: -25%
     // T1: {p =  8, c = 4}
-    // T2: {p = 12, c = 6}
-    // T3: {p = 20, c = 5}
+    // T2: {p = 12, c = 6} - Perde deadlines
+    // T3: {p = 20, c = 5} - Perde deadlines
     if (group == 4) {
         hf_spawn(task,  8, 4,  8, "T1", 2048);
         hf_spawn(task, 12, 6, 12, "T2", 2048);
         hf_spawn(task, 20, 5, 20, "T3", 2048);
     }
     
-    // Group 5
+    // Group 5 - Escalonavel. CPU livre: 19%
     // T1: {p =  5, c = 2}
     // T2: {p =  9, c = 3}
     // T3: {p = 20, c = 1}
@@ -63,7 +63,7 @@ void app_main(void) {
         hf_spawn(task, 30, 1, 30, "T4", 2048);
     }
     
-    // Group 6
+    // Group 6 - Escalonavel. CPU livre: 22%
     // T1: {p =  7, c = 2}
     // T2: {p =  8, c = 1}
     // T3: {p =  9, c = 1}
