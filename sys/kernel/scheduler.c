@@ -61,6 +61,15 @@ static void rt_queue_next()
 		panic(PANIC_CANT_PLACE_RT);
 }
 
+static void aperiodic_queue_next()
+{
+  krnl_task = hf_queue_remhead(krnl_aperiodic_queue);
+  if (!krnl_task)
+    panic(PANIC_NO_TASKS_APERIODIC);
+  if (hf_queue_addtail(krnl_aperiodic_queue, krnl_task))
+    panic(PANIC_CANT_PLACE_APERIODIC);
+}
+
 
 /**
  * @brief Task dispatcher.
@@ -276,3 +285,22 @@ int32_t sched_rma(void)
 		return 0;
 	}
 }
+
+
+/**
+ * @brief Aperiodic Task (AP) scheduler (callback).
+ * 
+ * @return Aperiodic task id.
+ * 
+ * TODO: document method
+ */
+int32_t sched_aperiodic(void) {
+  k = hf_queue_count(krnl_aperiodic_queue);
+	if (k == 0)
+	  // No task to run
+		return 0
+	
+	// Default: no task to run
+  return 0;
+}
+
