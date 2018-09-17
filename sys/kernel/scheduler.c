@@ -302,7 +302,7 @@ int32_t sched_aperiodic(void) {
 	if (k == 0)
 	  // No task to run
 		return 0
-	
+	// aperiodic_queue_next(); // Advance AT scheduler queue.
 	// Default: no task to run
   return 0;
 }
