@@ -109,7 +109,10 @@ void dispatch_isr(void *arg)
 		process_delay_queue();
 		krnl_current_task = krnl_pcb.sched_rt();
 		if (krnl_current_task == 0)
-			krnl_current_task = krnl_pcb.sched_be();
+		  // Call aperiodic scheduler. TODO: move a pointer to it inside the krnl_pcb.
+		  krnl_current_task = sched_aperiodic();
+		  if (krnl_current_task == 0)
+  			krnl_current_task = krnl_pcb.sched_be();
 		krnl_task->state = TASK_RUNNING;
 		krnl_pcb.preempt_cswitch++;
 #if KERNEL_LOG >= 1
