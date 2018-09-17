@@ -109,8 +109,8 @@ void dispatch_isr(void *arg)
 		process_delay_queue();
 		krnl_current_task = krnl_pcb.sched_rt();
 		if (krnl_current_task == 0)
-		  // Call aperiodic scheduler. TODO: move a pointer to it inside the krnl_pcb.
-		  krnl_current_task = sched_aperiodic();
+		  // Call aperiodic scheduler.
+		  krnl_current_task = krnl_pcb.sched_ap();
 		  if (krnl_current_task == 0)
   			krnl_current_task = krnl_pcb.sched_be();
 		krnl_task->state = TASK_RUNNING;
@@ -298,15 +298,22 @@ int32_t sched_rma(void)
  * TODO: document method
  */
 int32_t sched_aperiodic(void) {
+  int32_t i, k;
+  
   k = hf_queue_count(krnl_aperiodic_queue);
 	if (k == 0)
 	  // No task to run
 		return 0
-		
-	aperiodic_queue_next(); // Advance AT scheduler queue.
-
-  krnl_task->bgjobs++;  
-  
-  return krnl_task->id;
+	
+	for (i = 0; i < k; i++) {
+  	aperiodic_queue_next(); // Advance AT scheduler queue.
+  	
+  	if (krnl_task->state != TASK_BLOCKED && krnl_task->capacity_rem > 0) {
+  	  --krnl_task->capacity_rem;
+      krnl_task->bgjobs++;    	  
+      return krnl_task->id;
+  	}
+  }
+  return 0;
 }
 

@@ -77,6 +77,7 @@ static void clear_pcb(void)
 	/* setup callbacks for the schedulers */
 	krnl_pcb.sched_rt = sched_rma;
 	krnl_pcb.sched_be = sched_priorityrr;
+	krnl_pcb.sched_ap = sched_aperiodic;
 	/* and clear the process control block */
 	krnl_pcb.coop_cswitch = 0;
 	krnl_pcb.preempt_cswitch = 0;
