@@ -229,7 +229,7 @@ int32_t hf_spawn(void (*task)(), uint16_t period, uint16_t capacity, uint16_t de
 #if KERNEL_LOG == 2
 	dprintf("hf_spawn() %d ", (uint32_t)_read_us());
 #endif
-	if ((period < capacity) || (deadline < capacity))
+	if (period != 0 && deadline != 0 && ((period < capacity) || (deadline < capacity)))
 		return ERR_INVALID_PARAMETER;
 	
 	status = _di();
