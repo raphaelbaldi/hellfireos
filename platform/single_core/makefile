@@ -1,4 +1,4 @@
-APP = app/aula_10
+APP = app/aperiodic_test
 ARCH = mips/hf-risc
 
 SERIAL_BAUD=57600
