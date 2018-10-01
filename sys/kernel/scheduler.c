@@ -298,22 +298,26 @@ int32_t sched_rma(void)
  * TODO: document method
  */
 int32_t sched_aperiodic(void) {
-  int32_t i, k;
+    int32_t i, k;
   
-  k = hf_queue_count(krnl_aperiodic_queue);
+    k = hf_queue_count(krnl_aperiodic_queue);
+
 	if (k == 0)
-	  // No task to run
-		return 0
+	    // No task to run
+	    return 0;
 	
 	for (i = 0; i < k; i++) {
-  	aperiodic_queue_next(); // Advance AT scheduler queue.
+      	aperiodic_queue_next(); // Advance AT scheduler queue.
   	
-  	if (krnl_task->state != TASK_BLOCKED && krnl_task->capacity_rem > 0) {
-  	  --krnl_task->capacity_rem;
-      krnl_task->bgjobs++;    	  
-      return krnl_task->id;
-  	}
-  }
-  return 0;
+  	    if (krnl_task->state != TASK_BLOCKED) {
+  	        if (krnl_task->capacity_rem > 0) {
+      	        --krnl_task->capacity_rem;  	  
+                return krnl_task->id;
+            } else {
+                hf_kill(krnl_task->id);
+            }
+  	    }
+    }
+    return 0;
 }
 
