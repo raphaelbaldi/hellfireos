@@ -49,7 +49,7 @@ void task_spawner(void) {
 		while (jobs == hf_jobs(id)) {
 		    long time = random_at_most(450) + 50;
 		    delay_ms(time);
-		    hf_spawn(ap_task, 0, 1, 0, "AP", 2048);
+		    hf_spawn(ap_task, 0, random_at_most(9) + 1, 0, "AP", 2048); // Capacity between [1; 10]
 		}
 	}
 }
