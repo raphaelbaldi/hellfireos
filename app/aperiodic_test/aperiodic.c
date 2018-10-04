@@ -1,5 +1,8 @@
 #include <hellfire.h>
 
+#define MAX_BUFFER_SIZE 128
+int32_t ap_count = 0;
+
 long random_at_most(long max) {
   unsigned long
     // max <= RAND_MAX < ULONG_MAX, so this is okay.
@@ -43,13 +46,16 @@ void ap_task(void) {
 void task_spawner(void) {
     int32_t jobs, id;
 	id = hf_selfid();
+    char ap_task_name [MAX_BUFFER_SIZE];
 	for (;;) {
 		jobs = hf_jobs(id);
 		printf("\nTask spawner %d, Missed %d deadlines. Free CPU: %d. CPU load: %d.", id, hf_dlm(id), hf_freecpu(), hf_cpuload(id));
 		while (jobs == hf_jobs(id)) {
 		    long time = random_at_most(450) + 50;
 		    delay_ms(time);
-		    hf_spawn(ap_task, 0, 1, 0, "AP", 2048);
+            sprintf(ap_task_name, "AP[%d]", ap_count);
+		    hf_spawn(ap_task, 0, random_at_most(9) + 1, 0, ap_task_name, 2048); // Capacity between [1; 10]
+            ++ap_count;
 		}
 	}
 }
