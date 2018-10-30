@@ -2,39 +2,39 @@
 #include <noc.h>
 
 #define T1_PROC 0
-#define T1_PORT 0
+#define T1_PORT 5001
 #define T1_CHANNEL 1
 
-#define T2_PROC 0
-#define T2_PORT 0
+#define T2_PROC 1
+#define T2_PORT 5002
 #define T2_CHANNEL 2
 
-#define T3_PROC 0
-#define T3_PORT 0
+#define T3_PROC 2
+#define T3_PORT 5003
 #define T3_CHANNEL 3
 
-#define T4_PROC 0
-#define T4_PORT 0
+#define T4_PROC 3
+#define T4_PORT 5004
 #define T4_CHANNEL 4
 
-#define T5_PROC 0
-#define T5_PORT 0
+#define T5_PROC 3
+#define T5_PORT 5005
 #define T5_CHANNEL 5
 
-#define T6_PROC 0
-#define T6_PORT 0
+#define T6_PROC 4
+#define T6_PORT 5006
 #define T6_CHANNEL 6
 
-#define T7_PROC 0
-#define T7_PORT 0
+#define T7_PROC 4
+#define T7_PORT 5007
 #define T7_CHANNEL 7
 
-#define T8_PROC 0
-#define T8_PORT 0
+#define T8_PROC 5
+#define T8_PORT 5008
 #define T8_CHANNEL 8
 
-#define T9_PROC 0
-#define T9_PORT 0
+#define T9_PROC 6
+#define T9_PORT 5009
 #define T9_CHANNEL 9
 
 void handle_receive(int8_t* rcv_channels, int8_t rcv_count) {
