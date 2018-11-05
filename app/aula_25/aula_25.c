@@ -2,69 +2,74 @@
 #include <noc.h>
 
 #define T1_PROC 0
-#define T1_PORT 5001
+#define T1_PORT 20001
 #define T1_CHANNEL 1
 
 #define T2_PROC 1
-#define T2_PORT 5002
+#define T2_PORT 20002
 #define T2_CHANNEL 2
 
 #define T3_PROC 2
-#define T3_PORT 5003
+#define T3_PORT 20003
 #define T3_CHANNEL 3
 
 #define T4_PROC 3
-#define T4_PORT 5004
+#define T4_PORT 20004
 #define T4_CHANNEL 4
 
 #define T5_PROC 3
-#define T5_PORT 5005
+#define T5_PORT 20005
 #define T5_CHANNEL 5
 
 #define T6_PROC 4
-#define T6_PORT 5006
+#define T6_PORT 20006
 #define T6_CHANNEL 6
 
 #define T7_PROC 4
-#define T7_PORT 5007
+#define T7_PORT 20007
 #define T7_CHANNEL 7
 
 #define T8_PROC 5
-#define T8_PORT 5008
+#define T8_PORT 20008
 #define T8_CHANNEL 8
 
 #define T9_PROC 6
-#define T9_PORT 5009
+#define T9_PORT 20009
 #define T9_CHANNEL 9
 
 void handle_receive(int8_t* rcv_channels, int8_t rcv_count) {
+    if (rcv_count <= 0) {
+        return;
+    }
+
     int16_t val;
-    int8_t buf[1500];
+    int8_t buf[12000];
     int8_t receive_count = 0;
     uint16_t cpu, task, size;
 
     // Handle receives
     int i;
     for (i = 0; i < rcv_count; i++) {
+        printf("Waiting packet on channel %d\n", rcv_channels[i]);
 	    val = hf_recv(&cpu, &task, buf, &size, rcv_channels[i]);
 		if (val) {
 			printf("hf_recv(): [%d] error %d\n", hf_selfid(), val);
 		} else {
-			printf("hf_recv(): [%d] received a message from [%d@%d], with size %d", hf_selfid(), task, cpu, size);
+			printf("hf_recv(): [%d] received a message from [%d@%d], with size %d\n", hf_selfid(), task, cpu, size);
 		}
 	}
 }
 
-void handle_sends(int8_t* send_targets, int8_t* send_target_ports, int8_t* send_target_channels, int16_t* send_sizes, int8_t target_count) {
+void handle_sends(int8_t* send_targets, int16_t* send_target_ports, int8_t send_target_channels, int16_t* send_sizes, int8_t target_count) {
     int16_t val;
-    int8_t buf[1500];
+    int8_t buf[12000];
     int i;
 	for(i = 0; i < target_count; i++) {
-		val = hf_send(send_targets[i], send_target_ports[i], buf, send_sizes[i], send_target_channels[i]);
+		val = hf_send(send_targets[i], send_target_ports[i], buf, send_sizes[i], send_target_channels);
 		if (val) {
 		    printf("hf_send(): error %d\n", val);
 		} else {
-		    printf("hf_send(): [%d] sent a message to [%d:%d], size: %d\n", hf_selfid(), send_targets[i], send_target_ports[i], send_sizes[i]);
+		    printf("hf_send(): [%d] sent a message to [%d:%d], on channel [%d], size: %d\n", hf_selfid(), send_targets[i], send_target_ports[i], send_target_channels, send_sizes[i]);
 		}
 	}
 }
@@ -78,19 +83,19 @@ void t1(void) {
     
     const int8_t send_target_count = 5;
 	int8_t send_targets[5] = {T7_PROC,T2_PROC, T3_PROC, T4_PROC, T5_PROC};
-	int8_t send_target_ports[5] = {T7_PORT,T2_PORT, T3_PORT, T4_PORT, T5_PORT};
-	int8_t send_target_channels[5] = {T7_CHANNEL,T2_CHANNEL, T3_CHANNEL, T4_CHANNEL, T5_CHANNEL};
+	int16_t send_target_ports[5] = {T7_PORT,T2_PORT, T3_PORT, T4_PORT, T5_PORT};
+	int8_t send_target_channels[5] = {T7_CHANNEL, T2_CHANNEL, T3_CHANNEL, T4_CHANNEL, T5_CHANNEL};
 	int16_t send_sizes[5] = {1280,256,64,64,64};
 
 	if (hf_comm_create(hf_selfid(), T1_PORT, 0)) {
 		panic(0xff);
 	}
 
-	delay_ms(50);
+	delay_ms(200);
     handle_receive(NULL, 0);
     
-    delay_ms(50);
-    handle_sends(send_targets, send_target_ports, send_target_channels, send_sizes, send_target_count);
+    delay_ms(200);
+    handle_sends(send_targets, send_target_ports, T1_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
 	while (1) {
@@ -105,7 +110,7 @@ void t2(void) {
 	
 	const int8_t send_target_count = 3;
 	int8_t send_targets[3] = {T6_PROC, T7_PROC, T8_PROC};
-	int8_t send_target_ports[3] = {T6_PORT, T7_PORT, T8_PORT};
+	int16_t send_target_ports[3] = {T6_PORT, T7_PORT, T8_PORT};
 	int8_t send_target_channels[3] = {T6_CHANNEL,T7_CHANNEL, T8_CHANNEL};
 	int16_t send_sizes[3] = {64,320,320};
 	
@@ -116,11 +121,11 @@ void t2(void) {
 		panic(0xff);
 	}
 
-	delay_ms(50);
+	delay_ms(200);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(50);
-    handle_sends(send_targets, send_target_ports, send_target_channels, send_sizes, send_target_count);
+    delay_ms(200);
+    handle_sends(send_targets, send_target_ports, T2_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
 	while (1) {
@@ -134,7 +139,7 @@ void t3(void) {
 	
 	const int8_t send_target_count = 2;
 	int8_t send_targets[2] = {T7_PROC, T8_PROC};
-	int8_t send_target_ports[2] = {T7_PORT, T8_PORT};
+	int16_t send_target_ports[2] = {T7_PORT, T8_PORT};
 	int8_t send_target_channels[2] = {T7_CHANNEL, T8_CHANNEL};
 	int16_t send_sizes[2] = {320,64};
 	
@@ -145,11 +150,11 @@ void t3(void) {
 		panic(0xff);
 	}
 
-	delay_ms(50);
+	delay_ms(200);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(50);
-    handle_sends(send_targets, send_target_ports, send_target_channels, send_sizes, send_target_count);
+    delay_ms(200);
+    handle_sends(send_targets, send_target_ports, T3_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
 	while (1) {
@@ -162,7 +167,7 @@ void t4(void) {
 	
 	const int8_t send_target_count = 1;
 	int8_t send_targets[1] = {T8_PROC};
-	int8_t send_target_ports[1] = {T8_PORT};
+	int16_t send_target_ports[1] = {T8_PORT};
 	int8_t send_target_channels[1] = {T8_CHANNEL};
 	int16_t send_sizes[1] = {64};
 	
@@ -173,11 +178,11 @@ void t4(void) {
 		panic(0xff);
 	}
 
-	delay_ms(50);
+	delay_ms(200);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(50);
-    handle_sends(send_targets, send_target_ports, send_target_channels, send_sizes, send_target_count);
+    delay_ms(200);
+    handle_sends(send_targets, send_target_ports, T4_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
 	while (1) {
@@ -190,7 +195,7 @@ void t5(void) {
 	
 	const int8_t send_target_count = 1;
 	int8_t send_targets[1] = {T8_PROC};
-	int8_t send_target_ports[1] = {T8_PORT};
+	int16_t send_target_ports[1] = {T8_PORT};
 	int8_t send_target_channels[1] = {T8_CHANNEL};
 	int16_t send_sizes[1] = {640};
 	
@@ -201,11 +206,11 @@ void t5(void) {
 		panic(0xff);
 	}
 
-	delay_ms(50);
+	delay_ms(200);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(50);
-    handle_sends(send_targets, send_target_ports, send_target_channels, send_sizes, send_target_count);
+    delay_ms(200);
+    handle_sends(send_targets, send_target_ports, T5_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
 	while (1) {
@@ -218,7 +223,7 @@ void t6(void) {
 	
 	const int8_t send_target_count = 1;
 	int8_t send_targets[1] = {T9_PROC};
-	int8_t send_target_ports[1] = {T9_PORT};
+	int16_t send_target_ports[1] = {T9_PORT};
 	int8_t send_target_channels[1] = {T9_CHANNEL};
 	int16_t send_sizes[1] = {640};
 	
@@ -229,11 +234,11 @@ void t6(void) {
 		panic(0xff);
 	}
 
-	delay_ms(50);
+	delay_ms(200);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(50);
-    handle_sends(send_targets, send_target_ports, send_target_channels, send_sizes, send_target_count);
+    delay_ms(200);
+    handle_sends(send_targets, send_target_ports, T6_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
 	while (1) {
@@ -248,7 +253,7 @@ void t7(void) {
 	
 	const int8_t send_target_count = 1;
 	int8_t send_targets[1] = {T9_PROC};
-	int8_t send_target_ports[1] = {T9_PORT};
+	int16_t send_target_ports[1] = {T9_PORT};
 	int8_t send_target_channels[1] = {T9_CHANNEL};
 	int16_t send_sizes[1] = {640};
 	
@@ -259,11 +264,11 @@ void t7(void) {
 		panic(0xff);
 	}
 
-	delay_ms(50);
+	delay_ms(200);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(50);
-    handle_sends(send_targets, send_target_ports, send_target_channels, send_sizes, send_target_count);
+    delay_ms(200);
+    handle_sends(send_targets, send_target_ports, T7_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
 	while (1) {
@@ -283,11 +288,11 @@ void t8(void) {
 		panic(0xff);
 	}
 
-	delay_ms(50);
+	delay_ms(200);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(50);
-    handle_sends(NULL, NULL, NULL, NULL, 0);
+    delay_ms(200);
+    handle_sends(NULL, NULL, 0, NULL, 0);
 
 	// Wait forever
 	while (1) {
@@ -306,11 +311,11 @@ void t9(void) {
 		panic(0xff);
 	}
 
-	delay_ms(50);
+	delay_ms(200);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(50);
-    handle_sends(NULL, NULL, NULL, NULL, 0);
+    delay_ms(200);
+    handle_sends(NULL, NULL, 0, NULL, 0);
 
 	// Wait forever
 	while (1) {
