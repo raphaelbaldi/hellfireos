@@ -33,7 +33,7 @@
 #define T8_PORT 20008
 #define T8_CHANNEL 8
 
-#define T9_PROC 6
+#define T9_PROC 5
 #define T9_PORT 20009
 #define T9_CHANNEL 9
 
@@ -43,7 +43,7 @@ void handle_receive(int8_t* rcv_channels, int8_t rcv_count) {
     }
 
     int16_t val;
-    int8_t buf[12000];
+    int8_t buf[1500];
     int8_t receive_count = 0;
     uint16_t cpu, task, size;
 
@@ -62,7 +62,7 @@ void handle_receive(int8_t* rcv_channels, int8_t rcv_count) {
 
 void handle_sends(int8_t* send_targets, int16_t* send_target_ports, int8_t send_target_channels, int16_t* send_sizes, int8_t target_count) {
     int16_t val;
-    int8_t buf[12000];
+    int8_t buf[1500];
     int i;
 	for(i = 0; i < target_count; i++) {
 		val = hf_send(send_targets[i], send_target_ports[i], buf, send_sizes[i], send_target_channels);
@@ -88,13 +88,14 @@ void t1(void) {
 	int16_t send_sizes[5] = {1280,256,64,64,64};
 
 	if (hf_comm_create(hf_selfid(), T1_PORT, 0)) {
+	    printf("T1 failed to initialize comm\n");
 		panic(0xff);
 	}
 
-	delay_ms(200);
+	delay_ms(50);
     handle_receive(NULL, 0);
     
-    delay_ms(200);
+    delay_ms(50);
     handle_sends(send_targets, send_target_ports, T1_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
@@ -118,13 +119,14 @@ void t2(void) {
 	int8_t rcv_channels[1] = {T1_CHANNEL};
 
 	if (hf_comm_create(hf_selfid(), T2_PORT, 0)) {
+	    printf("T2 failed to initialize comm\n");
 		panic(0xff);
 	}
 
-	delay_ms(200);
+	delay_ms(50);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(200);
+    delay_ms(50);
     handle_sends(send_targets, send_target_ports, T2_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
@@ -147,13 +149,14 @@ void t3(void) {
 	int8_t rcv_channels[1] = {T1_CHANNEL};
 
 	if (hf_comm_create(hf_selfid(), T3_PORT, 0)) {
+	    printf("T3 failed to initialize comm\n");
 		panic(0xff);
 	}
 
-	delay_ms(200);
+	delay_ms(50);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(200);
+    delay_ms(50);
     handle_sends(send_targets, send_target_ports, T3_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
@@ -175,13 +178,14 @@ void t4(void) {
 	int8_t rcv_channels[1] = {T1_CHANNEL};
 
 	if (hf_comm_create(hf_selfid(), T4_PORT, 0)) {
+	    printf("T4 failed to initialize comm\n");
 		panic(0xff);
 	}
 
-	delay_ms(200);
+	delay_ms(50);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(200);
+    delay_ms(50);
     handle_sends(send_targets, send_target_ports, T4_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
@@ -203,13 +207,14 @@ void t5(void) {
 	int8_t rcv_channels[1] = {T1_CHANNEL};
 
 	if (hf_comm_create(hf_selfid(), T5_PORT, 0)) {
+	    printf("T5 failed to initialize comm\n");
 		panic(0xff);
 	}
 
-	delay_ms(200);
+	delay_ms(50);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(200);
+    delay_ms(50);
     handle_sends(send_targets, send_target_ports, T5_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
@@ -231,13 +236,14 @@ void t6(void) {
 	int8_t rcv_channels[1] = {T2_CHANNEL};
 
 	if (hf_comm_create(hf_selfid(), T6_PORT, 0)) {
+	    printf("T6 failed to initialize comm\n");
 		panic(0xff);
 	}
 
-	delay_ms(200);
+	delay_ms(50);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(200);
+    delay_ms(50);
     handle_sends(send_targets, send_target_ports, T6_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
@@ -261,13 +267,14 @@ void t7(void) {
 	int8_t rcv_channels[3] = {T1_CHANNEL, T2_CHANNEL, T3_CHANNEL};
 
 	if (hf_comm_create(hf_selfid(), T7_PORT, 0)) {
+	    printf("T7 failed to initialize comm\n");
 		panic(0xff);
 	}
 
-	delay_ms(200);
+	delay_ms(50);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(200);
+    delay_ms(50);
     handle_sends(send_targets, send_target_ports, T7_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
@@ -280,19 +287,27 @@ void t8(void) {
 	// Receive 64 to t3
 	// Receive 64 to t4
 	// Receive 640 to t5
+	// Send 640 to t9
+	
+	const int8_t send_target_count = 1;
+	int8_t send_targets[1] = {T9_PROC};
+	int16_t send_target_ports[1] = {T9_PORT};
+	int8_t send_target_channels[1] = {T9_CHANNEL};
+	int16_t send_sizes[1] = {640};  
 	
 	const int8_t rcv_count = 4;
 	int8_t rcv_channels[4] = {T2_CHANNEL, T3_CHANNEL, T4_CHANNEL, T5_CHANNEL};
 
 	if (hf_comm_create(hf_selfid(), T8_PORT, 0)) {
+	    printf("T8 failed to initialize comm\n");
 		panic(0xff);
 	}
 
-	delay_ms(200);
+	delay_ms(50);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(200);
-    handle_sends(NULL, NULL, 0, NULL, 0);
+    delay_ms(50);
+    handle_sends(send_targets, send_target_ports, T8_CHANNEL, send_sizes, send_target_count);
 
 	// Wait forever
 	while (1) {
@@ -308,14 +323,17 @@ void t9(void) {
 	int8_t rcv_channels[3] = {T6_CHANNEL, T7_CHANNEL, T8_CHANNEL};
 
 	if (hf_comm_create(hf_selfid(), T9_PORT, 0)) {
+	    printf("T9 failed to initialize comm\n");
 		panic(0xff);
 	}
 
-	delay_ms(200);
+	delay_ms(50);
     handle_receive(rcv_channels, rcv_count);
     
-    delay_ms(200);
+    delay_ms(50);
     handle_sends(NULL, NULL, 0, NULL, 0);
+
+    printf("T9 is done!\n");
 
 	// Wait forever
 	while (1) {
