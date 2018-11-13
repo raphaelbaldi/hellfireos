@@ -29,8 +29,14 @@ noc_3x2:
 	$(GCC) -o mpsoc_sim ./source/mpsoc_sim.c ./source/noc.c -lm -DN_CORES=6 -DNOC_WIDTH=3 -DNOC_HEIGHT=2 -DNOC_BUFFER_SIZE=16 -DOS_PACKET_SIZE=64
 noc_3x3:
 	$(GCC) -o mpsoc_sim ./source/mpsoc_sim.c ./source/noc.c -lm -DN_CORES=9 -DNOC_WIDTH=3 -DNOC_HEIGHT=3 -DNOC_BUFFER_SIZE=16 -DOS_PACKET_SIZE=64
+noc_3x4:
+	$(GCC) -o mpsoc_sim ./source/mpsoc_sim.c ./source/noc.c -lm -DN_CORES=12 -DNOC_WIDTH=3 -DNOC_HEIGHT=4 -DNOC_BUFFER_SIZE=16 -DOS_PACKET_SIZE=64
 noc_4x4:
 	$(GCC) -o mpsoc_sim ./source/mpsoc_sim.c ./source/noc.c -lm -DN_CORES=16 -DNOC_WIDTH=4 -DNOC_HEIGHT=4 -DNOC_BUFFER_SIZE=16 -DOS_PACKET_SIZE=64
+noc_4x5:
+	$(GCC) -o mpsoc_sim ./source/mpsoc_sim.c ./source/noc.c -lm -DN_CORES=20 -DNOC_WIDTH=4 -DNOC_HEIGHT=5 -DNOC_BUFFER_SIZE=16 -DOS_PACKET_SIZE=64
+noc_5x5:
+	$(GCC) -o mpsoc_sim ./source/mpsoc_sim.c ./source/noc.c -lm -DN_CORES=25 -DNOC_WIDTH=5 -DNOC_HEIGHT=5 -DNOC_BUFFER_SIZE=16 -DOS_PACKET_SIZE=64
 noc_6x5:
 	$(GCC) -o mpsoc_sim ./source/mpsoc_sim.c ./source/noc.c -lm -DN_CORES=30 -DNOC_WIDTH=6 -DNOC_HEIGHT=5 -DNOC_BUFFER_SIZE=16 -DOS_PACKET_SIZE=64
 noc_8x8:
