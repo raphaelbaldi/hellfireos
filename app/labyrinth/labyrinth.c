@@ -116,7 +116,7 @@ void slave(void) {
 		panic(0xff);
 	}
 	
-	printf("Task [%d] listening on port [%d].\n", hf_selfid(), port);
+	printf("Task on CPU [%d] listening on port [%d].\n", hf_cpuid(), port);
 	
 	int running = 1;
 	while(running) {
@@ -126,15 +126,15 @@ void slave(void) {
 		if (val) {
 			printf("hf_send(): error %d\n", val);
 		} else {
-			printf("hf_send(): [%d] request a job from the master node on channel 0\n", hf_selfid());
+			printf("hf_send(): [%d] request a job from the master node on channel 0\n", hf_cpuid());
 		}
 		
 		// Read the master node response
 		val = hf_recv(&cpu, &task, buf, &size, 0);
 		if (val) {
-			printf("hf_recv(): [%d] error %d\n", hf_selfid(), val);
+			printf("hf_recv(): [%d] error %d\n", hf_cpuid(), val);
 		} else {
-			printf("hf_recv(): [%d] received a message from [%d@%d], with size %d\n", hf_selfid(), task, cpu, size);
+			printf("hf_recv(): [%d] received a message from [%d@%d], with size %d\n", hf_cpuid(), task, cpu, size);
 		}
 		
 		// Check the first value
@@ -158,14 +158,14 @@ void slave(void) {
 			if (val) {
 				printf("hf_send(): error %d\n", val);
 			} else {
-				printf("hf_send(): [%d] sent a result to the master node on channel 0. Maze [%d], Result [%d].\n", hf_selfid(), maze_id, result);
+				printf("hf_send(): [%d] sent a result to the master node on channel 0. Maze [%d], Result [%d].\n", hf_cpuid(), maze_id, result);
 			}
 		} else if (buf[0] == STOP_RUNNING_EVENT) {
 			// Stop running
-			printf("[%d] Will stop running jobs since no more jobs available.\n", hf_selfid());
+			printf("[%d] Will stop running jobs since no more jobs available.\n", hf_cpuid());
 			running = 0;
 		} else {
-			printf("[%d] received an unknown protocol code [%d] from [%d@%d], with size %d\n", hf_selfid(), buf[0], task, cpu, size);
+			printf("[%d] received an unknown protocol code [%d] from [%d@%d], with size %d\n", hf_cpuid(), buf[0], task, cpu, size);
 		}
 	}
 	
@@ -203,9 +203,9 @@ void master(void) {
 		// Read the network
 		val = hf_recv(&cpu, &task, buf, &size, 0);
 		if (val) {
-			printf("hf_recv(): [%d] error %d\n", hf_selfid(), val);
+			printf("hf_recv(): [%d] error %d\n", hf_cpuid(), val);
 		} else {
-			printf("hf_recv(): [%d] received a message from [%d@%d], with size %d\n", hf_selfid(), task, cpu, size);
+			printf("hf_recv(): [%d] received a message from [%d@%d], with size %d\n", hf_cpuid(), task, cpu, size);
 		}
 		
 		if (buf[0] == GET_JOB_REQUEST) {
@@ -216,7 +216,7 @@ void master(void) {
 				if (val) {
 					printf("hf_send(): error %d\n", val);
 				} else {
-					printf("hf_send(): [%d] master node told [%d@%d] to stop running.\n", hf_selfid(), task, cpu);
+					printf("hf_send(): [%d] master node told [%d@%d] to stop running.\n", hf_cpuid(), task, cpu);
 				}
 			} else {
 				m = &mazes[current_maze];
@@ -238,7 +238,7 @@ void master(void) {
 				if (val) {
 					printf("hf_send(): error %d\n", val);
 				} else {
-					printf("hf_send(): [%d] Master node sent maze [%d] to slave [%d@%d].\n", hf_selfid(), current_maze, task, cpu);
+					printf("hf_send(): [%d] Master node sent maze [%d] to slave [%d@%d].\n", hf_cpuid(), current_maze, task, cpu);
 				}
 				++current_maze;
 			}
